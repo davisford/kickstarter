@@ -1,3 +1,7 @@
+
+var fileXML = "<file><id>6</id><name>my file</name></file>";
+var fileToUpload;
+
 // document ready
 $(function() {
 	// Check for the various File API support.
@@ -27,6 +31,14 @@ $(function() {
 		dragover:	dragoverHandler,
 		dragleave:	dragleaveHandler,
 		drop:		multidropHandler
+	});
+	
+	// Setup Handler for Single Upload Submit
+	$("#singleUploadBtn").click(function() {
+		var form = $("<form>").attr({'method':'post', 'action':'/rest/fileupload/'}).appendTo('<body>');
+		$('<input>').attr({'type':'hidden', 'name':'file-metadata'}).val(fileXML).appendTo(form);
+		$('<input>').attr({'type':'file', 'name':'file-content'}).val(fileToUpload).appendTo(form);
+		$(form).submit();
 	});
 	
 	// Setup Handler for Find Click
@@ -94,6 +106,7 @@ function singledropHandler(e) {
 		// read the file
 		reader.readAsBinaryString(f);
 	}
+	fileToUpload = f;
 	return false;
 }
 
