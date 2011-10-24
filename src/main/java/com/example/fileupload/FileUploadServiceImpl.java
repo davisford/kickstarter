@@ -1,19 +1,23 @@
 package com.example.fileupload;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 
 
 
 @Path("/fileupload/")
-@Produces("application/xml")
+@Produces(MediaType.APPLICATION_XML)
 public class FileUploadServiceImpl implements FileUploadService {
 
     private static Map<Integer, FileUploadFile> files = new HashMap<Integer, FileUploadFile>();
@@ -41,11 +45,15 @@ public class FileUploadServiceImpl implements FileUploadService {
         return files.get(id);
     }
 
-    @GET
-    @Path("/files/bad")
-    @Override
-    public Response getBadRequest() {
-        return Response.status(Status.BAD_REQUEST).build();
-    }
+	@Override
+	@POST
+	@Path("/")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public FileUploadFileResult create(
+			FileUploadFile file, 
+			@Multipart(value="file", type=MediaType.APPLICATION_OCTET_STREAM) InputStream istream) {
+		System.err.println("create called: "+file+" \n input stream? "+istream);
+		return new FileUploadFileResult("success");
+	}
 
 }

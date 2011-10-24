@@ -4,139 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Demo: File Upload</title>
 <link rel="stylesheet" type="text/css" media="all" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/ui-lightness/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="js/google-code-prettify/prettify.css" />
+<link rel="stylesheet" type="text/css" href="js/google-code-prettify/desert.css" />
+<link rel="stylesheet" type="text/css" href="css/fileupload.css" />
 <script type="text/javascript" src="js/google-code-prettify/prettify.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/md5.js"></script>
-<script type="text/javascript">
-	$(function() {
+<script type="text/javascript" src="js/fileupload.js"></script>
 
-		// Check for the various File API support.
-		if (window.File && window.FileReader && window.FileList && window.Blob) {
-			// Great success! All the File APIs are supported.
-		} else {
-			alert('This browser does not support the required JavaScript File APIs.  Please try a different browser.');
-		}
-
-		// Accordion
-		$("#accordion").accordion({
-			header : "h3",
-			autoHeight: "false"
-		});
-		
-		var $dropArea = $('#single_drop_zone');
-		
-		$dropArea.bind({
-			dragover: function() { 
-				$(this).addClass('hover'); 
-				return false; 
-			}, 
-			dragleave: function() {
-				$(this).removeClass('hover');
-				return false;
-			},
-			drop: function(e) {
-				e = e || window.event;
-				e.preventDefault();
-				
-				// clear previous list
-				$('#single_drop_list').html('<ul></ul>');
-				
-				// jQuery wraps the original event, so we try to detect that here
-				e = e.originalEvent || e;
-				// using e.files with fallback b/c e.dataTransfer is immutable
-				// and can't be overridden in Polyfills (http://sandbox.knarly.com/js/dropfiles)
-				// files is a FileList of File objects
-				var files = (e.files || e.dataTransfer.files);
-				var output = [];
-				for (var i=0; i<files.length; i++) {
-					(function (i) {
-						var f = files[i];
-						var reader = new FileReader();
-						reader.onload = function(event) {
-							// calculate md5
-							var md5 = hex_md5(event.target.result);
-							var li = '<li><strong>'+f.name+'</strong> ' +
-							'['+f.type+'] '+f.size+' bytes, last modified: '+
-							f.lastModifiedDate.toLocaleDateString()+', md5: '+md5+'</li>';						
-							$('#single_drop_list ul').append(li);
-						};
-						reader.onerror = function(err) {
-							$('#single_drop_list ul').append('<li><strong>error</strong> could not read '+f.name+' error code:'+err.target.error.code+'</li>');
-						};
-						reader.readAsBinaryString(f);
-					})(i);
-				}
-				
-				// remove decoration
-				$(this).removeClass('hover');
-				return false;
-			} // end drop function
-		}); // end drop area bind
-		
-		$("#findBtn").click(function() {
-			//$('#findResults').load('/rest/fileupload/files');
-			$.get(
-				'/rest/fileupload/files',	
-				function(data) {
-					$('#find-results').text(data);
-					prettyPrint();
-				},
-				'text'
-			);
-		});
-		
-		function styleCode() {
-			var a = false;
-			$("pre code").parent().each(function(){
-				if(!$(this).hasClass("prettyprint")) {
-					$(this).addClass("prettyprint");
-					a = true;
-				}
-			});
-			if(a) { prettyPrint() }
-		}
-	
-	}); // end function()
-</script>
-<style type="text/css">
-/*demo page css*/
-body {
-	font: 82.5% "Trebuchet MS", sans-serif;
-	margin: 50px;
-}
-
-.demoHeaders {
-	margin-top: 2em;
-}
-
-.drop_zone {
-	border: 3px dashed #bbb;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	padding: 25px;
-	text-align: center;
-	font: 20pt bold 'Vollkorn';
-	color: #bbb;
-}
-
-.drop_zone.hover {
-	border: 3px dashed #333;
-}
-
-textarea {
-	resize:both;
-	width: 100%;
-}
-
-</style>
 </head>
 <body>
-	<h1>File Upload Demo</h1>
 
-	<!-- Accordion -->
 	<h2 class="demoHeaders">File Upload Demo</h2>
 	<div id="accordion">
 		<div>
@@ -144,8 +22,9 @@ textarea {
 				<a href="#">Single File Upload</a>
 			</h3>
 			<div>
-				<div id="single_drop_zone" class="drop_zone">Drop a file here</div>
-				<output id="single_drop_list"></output>
+				<div id="single-drop-zone" class="drop-zone">Drop a file here</div>
+				<output id="single-drop-list"></output>
+				<button type="button" id="singleUploadBtn" style="display:block;">Submit</button>
 			</div>
 		</div>
 		<div>
@@ -153,8 +32,9 @@ textarea {
 				<a href="#">Multiple File Upload Session Creation</a>
 			</h3>
 			<div>
-				<div id="multi_drop_zone" class="drop_zone">Drop files here</div>
-				<output id="multi_drop_list"></output>
+				<div id="multi-drop-zone" class="drop-zone">Drop files here</div>
+				<output id="multi-drop-list"></output>
+				<button type="button" id="multiUploadBtn" style="display:block;">Submit</button>
 			</div>
 		</div>
 		<div>
@@ -163,12 +43,12 @@ textarea {
 			</h3>
 			<div>
 				<button type="button" id="findBtn" style="display:block;">Find</button>
-				<pre class="prettyprint" id="find-results">
+				<div id="codeblock">
+					<pre class="prettyprint" id="xml-response">
 					
-				</pre>
-<!-- 				<textarea id="results-text" rows="10" readonly="readonly" class='prettyprint'>
-
-				</textarea> -->
+					</pre>
+				</div>
+				
 			</div>
 		</div>
 	</div>

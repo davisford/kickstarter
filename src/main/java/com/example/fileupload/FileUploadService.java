@@ -1,6 +1,6 @@
 package com.example.fileupload;
 
-import javax.ws.rs.core.Response;
+import java.io.InputStream;
 
 
 public interface FileUploadService {
@@ -9,6 +9,6 @@ public interface FileUploadService {
 
     FileUploadFile getFile(Integer id);
 
-    Response getBadRequest();
+    FileUploadFileResult create(FileUploadFile file, InputStream istream);
 
 }

@@ -1,0 +1,36 @@
+/*demo page css*/
+body {
+	font: 82.5% "Trebuchet MS", sans-serif;
+	margin: 50px;
+}
+
+.demoHeaders {
+	margin-top: 2em;
+}
+
+.drop-zone {
+	border: 3px dashed #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 25px;
+	text-align: center;
+	font: 20pt bold 'Vollkorn';
+	color: #bbb;
+}
+
+.drop-zone.hover {
+	border: 3px dashed #333;
+}
+
+#codeblock {
+	margin: 10px;
+	height: 400px;
+	overflow: auto;
+}
+
+#xml-response {
+	border: 1px dashed #ccc;
+	margin: 5px;
+	padding: 5px;
+}
