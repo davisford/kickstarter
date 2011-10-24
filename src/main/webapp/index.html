@@ -80,7 +80,7 @@
 			$.get(
 				'/rest/fileupload/files',	
 				function(data) {
-					$('#results-text code').html(data);
+					$('#find-results').text(data);
 					prettyPrint();
 				},
 				'text'
@@ -163,8 +163,8 @@ textarea {
 			</h3>
 			<div>
 				<button type="button" id="findBtn" style="display:block;">Find</button>
-				<pre id="results-text" class="prettyprint">
-					<code class="lang-xml"></code>
+				<pre class="prettyprint" id="find-results">
+					
 				</pre>
 <!-- 				<textarea id="results-text" rows="10" readonly="readonly" class='prettyprint'>
 
