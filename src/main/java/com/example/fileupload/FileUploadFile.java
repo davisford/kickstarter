@@ -10,6 +10,7 @@ public class FileUploadFile {
     private String  name;
 
     public FileUploadFile() {
+
     }
 
     public FileUploadFile(Integer id, String name) {
