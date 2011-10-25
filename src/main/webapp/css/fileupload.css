@@ -23,6 +23,10 @@ body {
 	border: 3px dashed #333;
 }
 
+.uploadWidget div {
+	float:right;
+}
+
 #codeblock {
 	margin: 10px;
 	height: 400px;

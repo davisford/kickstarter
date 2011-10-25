@@ -30,6 +30,9 @@ public class FileUploadServiceImpl {
 	/** id sequence */
 	private static int sequence = 1;
     private static Map<Integer, FileInfo> files = new HashMap<Integer, FileInfo>();
+    
+    /* tracks file upload progress */
+    private static Map<String, Double> progress = new HashMap<String, Double>();
 
     public FileUploadServiceImpl() {
     }
@@ -45,29 +48,46 @@ public class FileUploadServiceImpl {
     public FileInfo getFile(@PathParam("id") Integer id) {
         return files.get(id);
     }
+    
+    @GET
+    @Path("/upload/progress/{name}")
+    public Response progress(@PathParam("name") String fileName) {
+    	if(progress.containsKey(fileName)) {
+    		Response r = Response.ok(progress.get(fileName)).build();
+    		System.out.println(r);
+    		return Response.ok(progress.get(fileName)).build();
+    	} else {
+    		// doesn't exist so progress is 100%
+    		return Response.ok("100").build();
+    	}
+    }
 		
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response upload(MultipartBody body) {
   		List<Attachment> attachments = body.getAllAttachments();
-  		
-  		Attachment a = body.getAttachment("file-metadata");
-
 		try {
-			DataHandler metafileHandler = attachments.get(0).getDataHandler();
-			DataHandler filestreamHandler = attachments.get(1).getDataHandler();
-			FileInfo fileInfo = getFileMetadataFromInputStream(metafileHandler.getInputStream());
+			// parse <file> XML into object
+			DataHandler fileInfoHandler = attachments.get(0).getDataHandler();
+			FileInfo fileInfo = getFileMetadataFromInputStream(fileInfoHandler.getInputStream());
+			// generate a new id
 			fileInfo.setId(sequence++);
+			// add it to the map
 			files.put(fileInfo.getId(), fileInfo);
+			// set the progress to zero
+			progress.put(fileInfo.getName(), 0.0);
 			System.out.println("\t received: "+fileInfo);
-			File file = getFileFromInputStream(fileInfo, filestreamHandler.getInputStream());
+			
+			// parse the input stream of the file
+			DataHandler fileHandler = attachments.get(1).getDataHandler();
+			File file = getFileFromInputStream(fileInfo, fileHandler.getInputStream());
 			System.out.println("\t wrote: "+file.getAbsolutePath());
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			throw new WebApplicationException(500);
 		}
-		return Response.ok().build();
+		return Response.ok("success").build();
 	}
 	
 	private FileInfo getFileMetadataFromInputStream(InputStream is) throws Exception {
@@ -83,9 +103,15 @@ public class FileUploadServiceImpl {
 		fileInfo.setPath(file.getAbsolutePath());
 		try {
 			out = new FileOutputStream(file);
-			int read = 0;
+			int read, amount = 0;
+			// use this to update progress
+			int total = fileInfo.getSize();
+			
 			byte[] bytes = new byte[1024];
 			while( (read = is.read(bytes)) != -1) {
+				amount += read;
+				Double percent = ( (double)amount / (double)total )	* 100;
+				progress.put(fileInfo.getName(), percent );
 				out.write(bytes, 0, read);
 			}
 		} finally {

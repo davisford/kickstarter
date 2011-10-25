@@ -26,6 +26,10 @@ $(function() {
 		fillSpace: "true"
 	});
 	
+	$('#progressbar').progressbar({
+		
+	});
+	
 	// Setup Handlers for Drag-N-Drop
 	var $singledrop = $('#single-drop-zone');
 	$singledrop.bind({
@@ -41,15 +45,34 @@ $(function() {
 		drop:		multidropHandler
 	});
 	
+	var timer;
+	
 	// Setup Handler for Single Upload Submit
 	$("#singleUploadBtn").click(function() {
-		var formData = new FormData();
-		formData.append("file-metadata", fileRef.toXml());
-		formData.append("file-content", fileRef);
 		
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", "/rest/fileupload/upload");
-		xhr.send(formData);
+		// clear previous result
+		$('#single-upload-result').val('');
+		
+		// clear timer
+		clearInterval(timer);
+		
+		// only do this if fileRef exists (i.e. they drag/dropped a file)
+		if(fileRef) {
+			var formData = new FormData();
+			formData.append("file-metadata", fileRef.toXml());
+			formData.append("file-content", fileRef);
+
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange=function() {
+				if(xhr.readyState==4 && xhr.status==200) {
+					$('#single-upload-response').html(xhr.responseText);
+				}
+			}
+			xhr.open("POST", "/rest/fileupload/upload");
+			xhr.send(formData);
+			timer = setInterval(pollProgress, 1000);
+		}
+		
 	});
 	
 	// Setup Handler for Find Click
@@ -64,6 +87,16 @@ $(function() {
 		);
 	});
 });
+
+function pollProgress() {
+	$.get(
+		'/rest/fileupload/upload/progress/'+fileRef.name,
+		function(data) {
+			console.log(data);
+			$('#progressbar').progressbar({value:data});
+		}
+	);
+}
 
 // callback for drag over event
 function dragoverHandler() {
