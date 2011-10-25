@@ -1,0 +1,18 @@
+This is my KickStarter project -- (nothing to do with kickstarter.com).  I call it KickStarter b/c it provides some base infrastructure for quickly building out a new WebApp.  I intend to make many different branches of it for various pieces of functionality I want, and then
+I can just switch to a branch, clone it, and begin developing on it w/o the hassle of setting up all the project nonsense.
+
+Feel free to use it for whatever you wish.  No license.
+
+The first such project is...
+
+-----------
+The Modern Browser File Upload
+-----------
+The user can drag-n-drop a file off the desktop into the browser and send the file and XML metadata about the file as a POST to a simple CXF REST-based service.  You can also calculate the MD5 client side, and validate it server-side.
+
+I'm making use of the newer File APIs like:
+
+https://developer.mozilla.org/en/XMLHttpRequest/FormData
+http://www.w3.org/TR/FileAPI/
+
+Enjoy.
