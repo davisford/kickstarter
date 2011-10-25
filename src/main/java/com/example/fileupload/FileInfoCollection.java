@@ -7,20 +7,20 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class FileUploadFileCollection {
+public class FileInfoCollection {
 
-    private Collection<FileUploadFile> files;
+    private Collection<FileInfo> files;
     
-    public FileUploadFileCollection() {
+    public FileInfoCollection() {
     }
 
-    public FileUploadFileCollection(Collection<FileUploadFile> users) {
+    public FileInfoCollection(Collection<FileInfo> users) {
         this.files = users;
     }
 
     @XmlElement(name="file")
     @XmlElementWrapper(name="files")
-    public Collection<FileUploadFile> getFiles() {
+    public Collection<FileInfo> getFiles() {
         return files;
     }
 

@@ -1,6 +1,14 @@
 
-var fileXML = "<file><id>6</id><name>my file</name></file>";
-var fileToUpload;
+File.prototype.toXml = function(md5) {
+		return "<file>"+
+			"<name>"+this.name+"</name>"+
+			"<lastModified>"+this.lastModifiedDate.toLocaleDateString()+"</lastModified>"+
+			"<md5>"+this.md5+"</md5>"+
+			"<size>"+this.size+"</size>"+
+			"<contentType>"+this.type+"</contentType>"+
+			"</file>";
+}
+var fileRef;
 
 // document ready
 $(function() {
@@ -35,10 +43,13 @@ $(function() {
 	
 	// Setup Handler for Single Upload Submit
 	$("#singleUploadBtn").click(function() {
-		var form = $("<form>").attr({'method':'post', 'action':'/rest/fileupload/'}).appendTo('<body>');
-		$('<input>').attr({'type':'hidden', 'name':'file-metadata'}).val(fileXML).appendTo(form);
-		$('<input>').attr({'type':'file', 'name':'file-content'}).val(fileToUpload).appendTo(form);
-		$(form).submit();
+		var formData = new FormData();
+		formData.append("file-metadata", fileRef.toXml());
+		formData.append("file-content", fileRef);
+		
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "/rest/fileupload/upload");
+		xhr.send(formData);
 	});
 	
 	// Setup Handler for Find Click
@@ -95,6 +106,9 @@ function singledropHandler(e) {
 			+ f.lastModifiedDate.toLocaleDateString() + ', md5: '
 			+ md5 + '</li>';
 			$('#single-drop-list ul').append(li);
+			// we need to save a ref to this file
+			fileRef = f;
+			fileRef.md5 = md5;
 		};
 		// error handler
 		reader.onerror = function(err) {
@@ -106,7 +120,7 @@ function singledropHandler(e) {
 		// read the file
 		reader.readAsBinaryString(f);
 	}
-	fileToUpload = f;
+	
 	return false;
 }
 
@@ -142,6 +156,7 @@ function multidropHandler(e) {
 						+ f.lastModifiedDate.toLocaleDateString() + ', md5: '
 						+ md5 + '</li>';
 				$('#multi-drop-list ul').append(li);
+				// TODO: finishi this
 			};
 			// error handler
 			reader.onerror = function(err) {
