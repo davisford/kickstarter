@@ -51,14 +51,15 @@ public class FileUploadServiceImpl {
     
     @GET
     @Path("/upload/progress/{name}")
-    public Response progress(@PathParam("name") String fileName) {
+    @Produces(MediaType.TEXT_PLAIN)
+    public String progress(@PathParam("name") String fileName) {
     	if(progress.containsKey(fileName)) {
-    		Response r = Response.ok(progress.get(fileName)).build();
-    		System.out.println(r);
-    		return Response.ok(progress.get(fileName)).build();
+    		//return Response.ok(progress.get(fileName)).build();
+    		return progress.get(fileName).toString();
     	} else {
     		// doesn't exist so progress is 100%
-    		return Response.ok("100").build();
+    		//return Response.ok("100").build();
+    		return "100";
     	}
     }
 		

@@ -8,7 +8,12 @@ File.prototype.toXml = function(md5) {
 			"<contentType>"+this.type+"</contentType>"+
 			"</file>";
 }
+
+// a reference to the file to be uploaded
 var fileRef;
+
+// timer interval id for polling progress
+var timer;
 
 // document ready
 $(function() {
@@ -27,7 +32,7 @@ $(function() {
 	});
 	
 	$('#progressbar').progressbar({
-		
+		value:0
 	});
 	
 	// Setup Handlers for Drag-N-Drop
@@ -44,9 +49,7 @@ $(function() {
 		dragleave:	dragleaveHandler,
 		drop:		multidropHandler
 	});
-	
-	var timer;
-	
+		
 	// Setup Handler for Single Upload Submit
 	$("#singleUploadBtn").click(function() {
 		
@@ -70,7 +73,8 @@ $(function() {
 			}
 			xhr.open("POST", "/rest/fileupload/upload");
 			xhr.send(formData);
-			timer = setInterval(pollProgress, 1000);
+			$('#progressbar').progressbar({value:0});
+			timer = setInterval(pollProgress, 100);
 		}
 		
 	});
@@ -89,13 +93,22 @@ $(function() {
 });
 
 function pollProgress() {
-	$.get(
-		'/rest/fileupload/upload/progress/'+fileRef.name,
-		function(data) {
-			console.log(data);
-			$('#progressbar').progressbar({value:data});
-		}
-	);
+	// append to the end so the browser doesn't cache the request
+	var ticks = new Date().getTime();
+	$.ajax({
+			url: '/rest/fileupload/upload/progress/'+fileRef.name+"?"+ticks,
+			dataType: 'text',
+			success: function(data) {
+				$('#progressbar').progressbar({value:parseFloat(data)});
+				if(data >= 100) {
+					clearInterval(timer);
+				}
+			},
+			error: function(xhr, status, ex){
+				alert(status);
+				clearInterval(timer);
+			}
+	});
 }
 
 // callback for drag over event
@@ -130,28 +143,39 @@ function singledropHandler(e) {
 	// even if they sent multiple files, we only take one
 	var f = files[0];
 	if(f) {
-		var reader = new FileReader();
-		// read handler
-		reader.onload = function(event) {
-			var md5 = hex_md5(event.target.result);
-			var li = '<li><strong>' + f.name + '</strong> ' + '[' + f.type
-			+ '] ' + f.size + ' bytes, last modified: '
-			+ f.lastModifiedDate.toLocaleDateString() + ', md5: '
-			+ md5 + '</li>';
-			$('#single-drop-list ul').append(li);
-			// we need to save a ref to this file
-			fileRef = f;
-			fileRef.md5 = md5;
-		};
-		// error handler
-		reader.onerror = function(err) {
-			$('#single-drop-list ul').append(
+		
+		if($('#md5-enabled').is(':checked')) {
+			var reader = new FileReader();
+			// read handler
+			reader.onload = function(event) {
+				var md5 = hex_md5(event.target.result);
+				$('#single-drop-list ul').append(
+					'<li><strong>' + f.name + '</strong> ' + '[' + f.type
+					+ '] ' + f.size + ' bytes, last modified: '
+					+ f.lastModifiedDate.toLocaleDateString() + ', md5: '
+					+ md5 + '</li>'
+				);
+				// we need to save a ref to this file
+				fileRef = f;
+				fileRef.md5 = md5;
+			};
+			// error handler
+			reader.onerror = function(err) {
+				$('#single-drop-list ul').append(
 					'<li><strong>error</strong> could not read ' + f.name
-							+ ' error code:' + err.target.error.code
-							+ '</li>');
-		};
-		// read the file
-		reader.readAsBinaryString(f);
+					+ ' error code:' + err.target.error.code
+					+ '</li>');
+			};
+			// read the file
+			reader.readAsBinaryString(f);
+		} else {
+			fileRef = f;
+			$('#single-drop-list').append(
+					'<li><strong>' + f.name + '</strong> ' + '[' + f.type
+					+ '] ' + f.size + ' bytes, last modified: '
+					+ f.lastModifiedDate.toLocaleDateString() + '</li>'	
+			);
+		}
 	}
 	
 	return false;
