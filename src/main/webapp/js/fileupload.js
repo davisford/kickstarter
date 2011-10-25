@@ -145,6 +145,7 @@ function singledropHandler(e) {
 	if(f) {
 		
 		if($('#md5-enabled').is(':checked')) {
+			$('#single-upload-response').html('Calculating MD5...please wait...');
 			var reader = new FileReader();
 			// read handler
 			reader.onload = function(event) {
