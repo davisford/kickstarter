@@ -1,68 +1,98 @@
+
 <!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Demo: File Upload</title>
-<link rel="stylesheet" type="text/css" media="all" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/ui-lightness/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="js/google-code-prettify/desert.css" />
-<link rel="stylesheet" type="text/css" href="css/fileupload.css" />
-<script type="text/javascript" src="js/google-code-prettify/prettify.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
-<script type="text/javascript" src="js/md5.js"></script>
-<script type="text/javascript" src="js/fileupload.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>DaisyWorks Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-</head>
-<body>
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
-	<h2 class="demoHeaders">File Upload Demo</h2>
-	<div id="accordion">
-		<div>
-			<h3>
-				<a href="#">Single File Upload</a>
-			</h3>
-			<div style="height:400px;">
-				<input id='md5-enabled' type="checkbox">Calculate MD5 (experimental - not for large files)</input>
-				<div id="single-drop-zone" class="drop-zone">Drop a file here</div>
-				<output id="single-drop-list"></output>
-				<table>
-					<tr>
-						<td><button type="button" id="singleUploadBtn" style="display:block;">Submit</button></td>
-						<td><div id="single-upload-response"></div></td>
-					</tr>
-				</table>
-				
-				<div id="progressbar"></div>
-				
-			</div>
-		</div>
-		<div>
-			<h3>
-				<a href="#">Multiple File Upload</a>
-			</h3>
-			<div>
-				<div id="multi-drop-zone" class="drop-zone">Drop files here</div>
-				<output id="multi-drop-list"></output>
-				<button type="button" id="multiUploadBtn" style="display:block;">TODO (not finished)</button>
-			</div>
-		</div>
-		<div>
-			<h3>
-				<a href="#">File Upload Search</a>
-			</h3>
-			<div>
-				<button type="button" id="findBtn" style="display:block;">Find</button>
-				<div id="codeblock">
-					<pre class="prettyprint" id="xml-response">
-					
-					</pre>
-				</div>
-				
-			</div>
-		</div>
-	</div>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-</body>
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">DaisyWorks Demo</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h1>Dog Kennel Opener!</h1>
+        <p>Put instructions here on what to do.</p>
+        <p><input id="hiTextBox" class="span2" type="text" placeholder="Say hi to who?">
+        <p><a id="bigBlueButton" class="btn btn-primary btn-large">Say Hello &raquo;</a></p>
+      </div>
+
+      <div class="well span8">
+      	<form class="form-inline span4">
+      		<input id="idTextBox" type="text" class="input-small" placeholder="Id">
+      		<input id="nameTextBox" type="text" class="input-small" placeholder="Name">
+      		<button id="saveWidgetButton" type="submit" class="btn">Save Widget</button>
+      	</form>
+      	<div class="span3">
+      	  <h3>Widgets</h3>
+      	  <ul id="widgetList" class="span4">
+      	
+      	  </ul>
+      	</div>
+      	<div class="btn-group span2" data-toggle="buttons-radio">
+      		<h4>Toggle Switch</h4>
+  			<button id="onButton" class="btn">On</button>
+  			<button id="offButton" class="btn">Off</button>
+		</div>
+      </div>
+      <div class="row"></div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; DaisyWorks, Inc. 2012</p> 
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="javascripts/vendor/jquery-1.7.2.min.js"></script>
+    <!-- <script src="bootstrap/js/bootstrap.js"></script> -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="javascripts/application.js"></script>
+  </body>
 </html>
-
-
